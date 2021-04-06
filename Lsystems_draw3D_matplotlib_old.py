@@ -2,14 +2,16 @@
 # Based on Algorithmic Beauty Of Plants Book
 # @author : Thomas LENNE
 # branching  drawing3D script
-# The turtle draw xOz projection
+
 
 
 from Lsystems_creation import *
 from math import *
 from random import *
 from numpy import *
-import turtle
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d  # for 3D
+
 
 
 #rotations functions
@@ -148,45 +150,45 @@ def tropism(hlu,t):
     return H,L,U
 
 #fra leaf
-def draw_leaf(xyz,hlu,word,alphabet):
-    '''draw a defined leaf at xyz coords
-    parameters : xyz (tuple) turtle coordinates
-                 word (string) parametric word
-                 alphabet (list)
-    '''
-    modules=word_to_modules(word, alphabet)
-    polygon=[] # sequence of coordinates for surface
-    xyzf=xyz
-    for module in modules:
+# # def draw_leaf(xyz,hlu,word,alphabet):
+#     '''draw a defined leaf at xyz coords
+#     parameters : xyz (tuple) turtle coordinates
+#                  word (string) parametric word
+#                  alphabet (list)
+#     '''
+#     modules=word_to_modules(word, alphabet)
+#     polygon=[] # sequence of coordinates for surface
+#     xyzf=xyz
+#     for module in modules:
         
-        if module[0]=='G':
-            turtle.up()
-            h=hlu[0]
-            xyzf=translate(xyz,eval(parameters(module)[0]),h)
-            xf,yf,zf=xyzf
-            turtle.goto(xf,zf)
+#         # if module[0]=='G':
+#         #     turtle.up()
+#         #     h=hlu[0]
+#         #     xyzf=translate(xyz,eval(parameters(module)[0]),h)
+#         #     xf,yf,zf=xyzf
+#         #     turtle.goto(xf,zf)
     
-        elif module[0]=='^':
-            angle=eval(parameters(module)[0])
-            hlu=RU(angle,hlu)
+#         elif module[0]=='^':
+#             angle=eval(parameters(module)[0])
+#             hlu=RU(angle,hlu)
 
-        elif module[0]=='{':
-            turtle.begin_fill()
+#         elif module[0]=='{':
+#             turtle.begin_fill()
         
-        elif module[0]=='}':
-            #print(polygon)
-            turtle.down()
-            turtle.color('dark green')
-            for v in polygon :
-                turtle.goto(v[0],v[2])
-            turtle.end_fill()
-            polygon=[]
+#         elif module[0]=='}':
+#             #print(polygon)
+#             turtle.down()
+#             turtle.color('dark green')
+#             for v in polygon :
+#                 turtle.goto(v[0],v[2])
+#             turtle.end_fill()
+#             polygon=[]
             
-        elif module[0]=='°':
-            polygon.append(xyzf)
+#         elif module[0]=='°':
+#             polygon.append(xyzf)
     
-    turtle.color('black')
-    turtle.up()
+#     turtle.color('black')
+#     turtle.up()
 
 
 #draw
@@ -200,27 +202,31 @@ def draw(words,alphabet):
     e=0.2 # susceptibility to bending
     T=list(e*array(T))
     
-    #init coordinates of the turtle
+    #init coordinates
     xyz=(0,0,-300) 
     x,y,z=xyz
-    turtle.up()
-    turtle.goto(x,z)
     
-    #init orientation of the turtle
+    
+    #init orientation
     teta=pi/6
     HLU=([0,0,1],[-sin(teta),-cos(teta),0],[-cos(teta),sin(teta),0])
     stack=[] # to memorize the turtle state
     polygon=[] #coordinates for surface
     modules_t=word_to_modules(words[0], alphabet) #tree modules
-    
+
+    #init matplotlib
+    X,Y,Z=[x],[y],[z] #matplotlib tabs
+    LINEWIDTH=1
+
     for module in modules_t :
-        turtle.down()
         if module[0]=='F':
-            turtle.down()
+            
             H=HLU[0]
             xyz=translate(xyz,eval(parameters(module)[0]),H)
             x,y,z=xyz
-            turtle.goto(x,z)
+            X.append(x)
+            Y.append(y)
+            Z.append(z)
             HLU=tropism(HLU,T)
             
         elif module[0]=='^':
@@ -239,57 +245,63 @@ def draw(words,alphabet):
             stack.append((xyz,HLU))
         
         elif module[0]==']':
-            turtle.up()
             xyz=stack[-1][0]
             x,y,z=xyz
-            turtle.goto(x, z)
+            X.append(x)
+            Y.append(y)
+            Z.append(z)
             HLU=stack[-1][1]
             stack=stack[:-1]
-            turtle.down()
         
         elif module[0]=='!':
-            turtle.width(eval(parameters(module)[0]))
+            LINEWIDTH=eval(parameters(module)[0])
 
         elif module[0]=='$':
             HLU=L_horizontal(HLU)
         
         if module[0]=='G':
-            #turtle.up()
-            turtle.down()
-            turtle.color('green')
             H=HLU[0]
             xyz=translate(xyz,eval(parameters(module)[0]),H)
             x,y,z=xyz
-            turtle.goto(x,z)
+            X.append(x)
+            Y.append(y)
+            Z.append(z)
     
-        elif module[0]=='{':
-            turtle.begin_fill()
+        # elif module[0]=='{':
+        #     turtle.begin_fill()
         
-        elif module[0]=='}':
-            turtle.down()
-            turtle.color('dark green')
-            for v in polygon :
-                turtle.goto(v[0],v[2])
-            turtle.end_fill()
-            polygon=[]
-            turtle.color('black')
+        # elif module[0]=='}':
+        #     turtle.down()
+        #     turtle.color('dark green')
+        #     for v in polygon :
+        #         turtle.goto(v[0],v[2])
+        #     turtle.end_fill()
+        #     polygon=[]
+        #     turtle.color('black')
 
-        elif module[0]=='°':
-            polygon.append(xyz)
+        # elif module[0]=='°':
+        #     polygon.append(xyz)
 
     
-        elif module[0]=='L':
-            draw_leaf(xyz,HLU,words[1],alphabet)
+        # elif module[0]=='L':
+        #     draw_leaf(xyz,HLU,words[1],alphabet)
+
+    #plotting
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')  # 3D display
+    ax.plot(X, Y, Z, label='Tree')  # Drawing 
+    plt.show()
 
 
 
-N=13 #steps
+
+
+
+N=8 #steps
 AXIOME_T,AXIOME_L=AXIOMES
 PRODUCTION_T,PRODUCTION_L=PRODUCTIONS
 PATTERNS=[parametric_word(AXIOME_T,PRODUCTION_T,ALPHABET,N),parametric_word(AXIOME_L,PRODUCTION_L,ALPHABET,N+4)] 
 #print(PATTERNS)
-turtle.reset()
-turtle.hideturtle()
-#turtle.tracer(120)
+
 draw(PATTERNS, ALPHABET)  
-turtle.done()  
+
