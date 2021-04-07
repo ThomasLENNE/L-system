@@ -211,16 +211,18 @@ def draw(words,alphabet):
     teta=pi/6
     HLU=([0,0,1],[-sin(teta),-cos(teta),0],[-cos(teta),sin(teta),0])
     stack=[] # to memorize the turtle state
-    polygon=[] #coordinates for surface
+    # polygon=[] #coordinates for surface
+    
     modules_t=word_to_modules(words[0], alphabet) #tree modules
 
     #init matplotlib
     X,Y,Z=[x],[y],[z] #matplotlib tabs
     LINEWIDTH=1
-
+    LINES=[] #Lines to draw
+    line=() #current line
+    
     for module in modules_t :
         if module[0]=='F':
-            
             H=HLU[0]
             xyz=translate(xyz,eval(parameters(module)[0]),H)
             x,y,z=xyz
@@ -243,15 +245,21 @@ def draw(words,alphabet):
 
         elif module[0]=='[':
             stack.append((xyz,HLU))
+            LINES.append((X,Y,Z))
+            x,y,z=xyz
+            X,Y,Z=[x],[y],[z]
         
         elif module[0]==']':
             xyz=stack[-1][0]
-            x,y,z=xyz
-            X.append(x)
-            Y.append(y)
-            Z.append(z)
+            # x,y,z=xyz
+            # X.append(x)
+            # Y.append(y)
+            # Z.append(z)
             HLU=stack[-1][1]
             stack=stack[:-1]
+            LINES.append((X,Y,Z))
+            x,y,z=xyz
+            X,Y,Z=[x],[y],[z]
         
         elif module[0]=='!':
             LINEWIDTH=eval(parameters(module)[0])
@@ -289,7 +297,9 @@ def draw(words,alphabet):
     #plotting
     fig = plt.figure()
     ax = fig.gca(projection='3d')  # 3D display
-    ax.plot(X, Y, Z, label='Tree')  # Drawing 
+    for line in LINES:
+        X,Y,Z=line
+        ax.plot(X, Y, Z, 'k',linewidth=LINEWIDTH)  # Drawing 
     plt.show()
 
 
@@ -297,7 +307,7 @@ def draw(words,alphabet):
 
 
 
-N=8 #steps
+N=10 #steps
 AXIOME_T,AXIOME_L=AXIOMES
 PRODUCTION_T,PRODUCTION_L=PRODUCTIONS
 PATTERNS=[parametric_word(AXIOME_T,PRODUCTION_T,ALPHABET,N),parametric_word(AXIOME_L,PRODUCTION_L,ALPHABET,N+4)] 

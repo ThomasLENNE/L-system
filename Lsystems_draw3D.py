@@ -283,13 +283,13 @@ def draw(words,alphabet):
 
 
 
-N=13 #steps
+N=8 #steps
 AXIOME_T,AXIOME_L=AXIOMES
 PRODUCTION_T,PRODUCTION_L=PRODUCTIONS
 PATTERNS=[parametric_word(AXIOME_T,PRODUCTION_T,ALPHABET,N),parametric_word(AXIOME_L,PRODUCTION_L,ALPHABET,N+4)] 
 #print(PATTERNS)
 turtle.reset()
 turtle.hideturtle()
-#turtle.tracer(120)
+turtle.tracer(120)
 draw(PATTERNS, ALPHABET)  
 turtle.done()  
