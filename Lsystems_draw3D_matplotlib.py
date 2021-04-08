@@ -152,7 +152,7 @@ def draw(words,alphabet):
     #environment
     sigma=pi/16#standard variation of rotation angle
     T=[0,0,-0.5] #tropism vector
-    e=0.2 # susceptibility to bending
+    e=0.5 # susceptibility to bending
     T=list(e*array(T))
     
     #init coordinates

@@ -21,7 +21,7 @@ d=137.5*pi/180
 wr=0.707
 
 #Productions
-AXIOME='A(75,15)'
+AXIOME='A(50,10)'
 PRODUCTION=['A(l,w):True→!(w)F(l)[&(a0)B(l*r2,w*wr)]|(d)A(l*r1,w*wr)',
              'B(l,w):True→!(w)F(l)[^(-a2)$()C(l*r2,w*wr)]C(l*r1,w*wr)',
              'C(l,w):True→!(w)F(l)[^(a2)$()B(l*r2,w*wr)]B(l*r1,w*wr)'
