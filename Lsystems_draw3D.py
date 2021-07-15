@@ -281,9 +281,12 @@ def draw(words,alphabet):
         elif module[0]=='L':
             draw_leaf(xyz,HLU,words[1],alphabet)
 
+def exporteps(name):
+    ts=turtle.getscreen()
+    ts.getcanvas().postscript(file =name, colormode = 'color')
 
-
-N=8 #steps
+N=13 #steps
+NAME='monopodial_tree'
 AXIOME_T,AXIOME_L=AXIOMES
 PRODUCTION_T,PRODUCTION_L=PRODUCTIONS
 PATTERNS=[parametric_word(AXIOME_T,PRODUCTION_T,ALPHABET,N),parametric_word(AXIOME_L,PRODUCTION_L,ALPHABET,N+4)] 
@@ -291,5 +294,6 @@ PATTERNS=[parametric_word(AXIOME_T,PRODUCTION_T,ALPHABET,N),parametric_word(AXIO
 turtle.reset()
 turtle.hideturtle()
 turtle.tracer(120)
-draw(PATTERNS, ALPHABET)  
+draw(PATTERNS, ALPHABET) 
+exporteps(name=NAME+'.ps') 
 turtle.done()  
